@@ -105,7 +105,7 @@ export const MainScreen: React.FC = () => {
         {cards.length > 0 ? (
           <BottomSheet
             ref={bottomSheetRef}
-            snapPoints={[500]}
+            snapPoints={['50%', '70%']}
             handleComponent={CardCarousel}
           >
             <BottomSheetScrollView
