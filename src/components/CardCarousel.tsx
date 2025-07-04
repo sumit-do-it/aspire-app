@@ -1,61 +1,98 @@
-import React, { useRef, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import SnapCarousel from './SnapCarousel';
-import { CardComponent } from './CardComponent';
-import { Card } from '@typings/index';
-import BottomSheet from '@gorhom/bottom-sheet';
+import React, { useRef } from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
+import SnapCarousel from "./SnapCarousel";
+import { CardComponent } from "./CardComponent";
+import { Card } from "@typings/index";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import CardOptions from "./CardOptions";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { updateSelectedCard } from "../redux/actions";
 
 interface CardCarouselProps {
   cards: Card[];
   onToggleFreeze: (cardId: string) => void;
+  selectedCardIndex: number;
 }
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.85;
 const CARD_SPACING = 16;
 
-export const CardCarousel: React.FC<CardCarouselProps> = ({
-  cards,
-  onToggleFreeze,
-}) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const bottomSheetRef = useRef<BottomSheet>(null);
-
-  const renderItem = ({ item }: { item: Card }) => (
+const BottomSheetHandleComponent = React.memo(() => {
+  const dispatch = useDispatch();
+  const { cards } = useSelector((state: RootState) => state.cards);
+  const renderItem = ({ item, index }: { item: Card; index: number }) => (
     <CardComponent card={item} />
   );
 
-  const selectedCard = cards[activeIndex];
+  const onSnapToItem = (newIndex: number) => {
+    if (newIndex >= 0) {
+      dispatch(updateSelectedCard(newIndex));
+    }
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.carouselContainer}>
       <SnapCarousel
         data={cards}
         renderItem={renderItem}
         itemWidth={CARD_WIDTH}
         separatorWidth={CARD_SPACING}
-        onSnapToItem={setActiveIndex}
+        onSnapToItem={onSnapToItem}
         initialIndex={0}
       />
-      <BottomSheet ref={bottomSheetRef} snapPoints={[180]}>
-        <View style={{ padding: 16 }}>
-          <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 12 }}>Card Options</Text>
-          <TouchableOpacity onPress={() => {/* Top-up logic */}} style={styles.optionBtn}>
-            <Text>Top-up account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {/* Set limit logic */}} style={styles.optionBtn}>
-            <Text>Weekly spending limit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => onToggleFreeze(selectedCard.id)} style={styles.optionBtn}>
-            <Text>{selectedCard.isFrozen ? 'Unfreeze card' : 'Freeze card'}</Text>
-          </TouchableOpacity>
-        </View>
+    </View>
+  );
+});
+
+export const CardCarousel: React.FC<CardCarouselProps> = ({
+  cards,
+  selectedCardIndex,
+  onToggleFreeze,
+}) => {
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const selectedCard = cards[selectedCardIndex];
+
+  const cardOptions = [
+    {
+      title: "Top-up account",
+      description: "Deposite money to your account to use with card",
+    },
+    {
+      title: "Weekly spending limit",
+      description: "Your weekly spending limit is $5000",
+    },
+    {
+      title: selectedCard?.isFrozen ? "Unfreeze card" : "Freeze card",
+      description: selectedCard?.isFrozen
+        ? "Your card is currently inactive"
+        : "Your card is currently active",
+      category: "SWITCH",
+      onPress: () => {
+        onToggleFreeze(selectedCard?.id);
+      },
+      status: selectedCard?.isFrozen,
+    },
+  ];
+
+  return (
+    <View style={styles.container}>
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={[500]}
+        handleComponent={BottomSheetHandleComponent}
+      >
+        <BottomSheetScrollView
+          bounces={false}
+          bouncesZoom={false}
+          contentContainerStyle={[
+            styles.bottomSheetContainer,
+            styles.bottomSheetContentContainer,
+          ]}
+        >
+          <CardOptions options={cardOptions} />
+        </BottomSheetScrollView>
       </BottomSheet>
     </View>
   );
@@ -63,12 +100,28 @@ export const CardCarousel: React.FC<CardCarouselProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    height: 400,
-    marginVertical: 20,
+    flex: 1,
+    zIndex: 999,
   },
   optionBtn: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
+    gap: 4,
+  },
+  bottomSheetContainer: {
+    paddingTop: 120,
+  },
+  carouselContainer: {
+    position: "absolute",
+    top: -100,
+  },
+  bottomSheetContentContainer: {
+    padding: 16,
+  },
+  optionDesc: {
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#666",
   },
 });

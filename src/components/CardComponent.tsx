@@ -110,18 +110,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     position: "relative",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   },
   frozenCard: {
-    opacity: 0.7,
-    backgroundColor: "#374151",
+    // opacity: 0.7,
+    backgroundColor: "#5c636e",
   },
   cardHeader: {
     flexDirection: "row",
@@ -175,6 +167,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     right: 20,
+    zIndex: 2
   },
   freezeButtonActive: {
     backgroundColor: "#EF4444",
@@ -198,7 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: -1,
+    zIndex: 1,
   },
   frozenLabel: {
     fontSize: 12,

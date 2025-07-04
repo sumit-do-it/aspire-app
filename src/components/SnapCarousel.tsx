@@ -1,7 +1,6 @@
 import React, { memo, useRef } from "react";
 import {
   FlatList,
-  View,
   Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -83,4 +82,4 @@ function SnapCarousel<T>({
   );
 }
 
-export default SnapCarousel;
+export default memo(SnapCarousel);

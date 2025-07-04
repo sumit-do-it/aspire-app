@@ -22,9 +22,12 @@ import { AddCardModal } from "../components/AddCardModal";
 
 export const MainScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const { cards, loading, error } = useSelector(
-    (state: RootState) => state.cards
-  );
+  const {
+    cards,
+    loading,
+    error,
+    selectedCard: selectedCardIndex,
+  } = useSelector((state: RootState) => state.cards);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -78,48 +81,54 @@ export const MainScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Balance Section */}
-      <View style={styles.balanceSection}>
-        <Text style={styles.balanceLabel}>Available balance</Text>
-        <Text style={styles.balanceAmount}>$3,000.00</Text>
-        <View style={styles.rowCenter}>
-          <Ionicons name="eye-outline" size={16} color="#9CA3AF" />
-          <Text style={styles.balanceSubtext}>Show balance</Text>
-        </View>
-      </View>
-
-      {/* Cards Section */}
-      <View style={styles.cardsSection}>
-        <View style={styles.cardsSectionHeader}>
-          <Text style={styles.sectionTitle}>Debit Cards</Text>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={handleOpenModal}
-            disabled={loading}
-          >
-            <Ionicons name="add" size={20} color="#10B981" />
-            <Text style={styles.addButtonText}>Add Card</Text>
-          </TouchableOpacity>
+      <View style={{ position: "absolute", left: 0, right: 0, top: 120 }}>
+        {/* Balance Section */}
+        <View style={styles.balanceSection}>
+          <Text style={styles.balanceLabel}>Available balance</Text>
+          <Text style={styles.balanceAmount}>$3,000.00</Text>
+          <View style={styles.rowCenter}>
+            <Ionicons name="eye-outline" size={16} color="#9CA3AF" />
+            <Text style={styles.balanceSubtext}>Show balance</Text>
+          </View>
         </View>
 
-        {cards.length > 0 ? (
-          <CardCarousel cards={cards} onToggleFreeze={handleToggleFreeze} />
-        ) : (
-          <View style={styles.emptyState}>
-            <Ionicons name="card-outline" size={64} color="#6B7280" />
-            <Text style={styles.emptyStateTitle}>No cards yet</Text>
-            <Text style={styles.emptyStateText}>
-              Add your first card to get started
-            </Text>
+        {/* Cards Section */}
+        <View style={styles.cardsSection}>
+          <View style={styles.cardsSectionHeader}>
+            <Text style={styles.sectionTitle}>Debit Cards</Text>
             <TouchableOpacity
-              style={styles.emptyStateButton}
+              style={styles.addButton}
               onPress={handleOpenModal}
+              disabled={loading}
             >
-              <Text style={styles.emptyStateButtonText}>Add Card</Text>
+              <Ionicons name="add" size={20} color="#10B981" />
+              <Text style={styles.addButtonText}>Add Card</Text>
             </TouchableOpacity>
           </View>
-        )}
+        </View>
       </View>
+
+      {cards.length > 0 ? (
+        <CardCarousel
+          cards={cards}
+          selectedCardIndex={selectedCardIndex}
+          onToggleFreeze={handleToggleFreeze}
+        />
+      ) : (
+        <View style={styles.emptyState}>
+          <Ionicons name="card-outline" size={64} color="#6B7280" />
+          <Text style={styles.emptyStateTitle}>No cards yet</Text>
+          <Text style={styles.emptyStateText}>
+            Add your first card to get started
+          </Text>
+          <TouchableOpacity
+            style={styles.emptyStateButton}
+            onPress={handleOpenModal}
+          >
+            <Text style={styles.emptyStateButtonText}>Add Card</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Add Card Modal */}
       <AddCardModal

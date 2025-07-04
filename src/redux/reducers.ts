@@ -1,5 +1,5 @@
-import { createReducer } from '@reduxjs/toolkit';
-import { CardsState } from '@typings/index';
+import { createReducer } from "@reduxjs/toolkit";
+import { CardsState } from "@typings/index";
 import {
   fetchCardsRequest,
   fetchCardsSuccess,
@@ -10,12 +10,14 @@ import {
   toggleCardFreezeRequest,
   toggleCardFreezeSuccess,
   toggleCardFreezeFailure,
-} from './actions';
+  updateSelectedCard,
+} from "./actions";
 
 const initialState: CardsState = {
   cards: [],
   loading: false,
   error: null,
+  selectedCard: 0,
 };
 
 export const cardsReducer = createReducer(initialState, (builder) => {
@@ -56,7 +58,7 @@ export const cardsReducer = createReducer(initialState, (builder) => {
     .addCase(toggleCardFreezeSuccess, (state, action) => {
       state.loading = false;
       const { cardId, isFrozen } = action.payload;
-      const cardIndex = state.cards.findIndex(card => card.id === cardId);
+      const cardIndex = state.cards.findIndex((card) => card.id === cardId);
       if (cardIndex !== -1) {
         state.cards[cardIndex].isFrozen = isFrozen;
       }
@@ -65,5 +67,8 @@ export const cardsReducer = createReducer(initialState, (builder) => {
     .addCase(toggleCardFreezeFailure, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    })
+    .addCase(updateSelectedCard, (state, action) => {
+      state.selectedCard = action.payload
     });
 });

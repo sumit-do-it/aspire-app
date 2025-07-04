@@ -15,3 +15,6 @@ export const addCardFailure = createAction<string>('cards/addCardFailure');
 export const toggleCardFreezeRequest = createAction<ToggleFreezePayload>('cards/toggleCardFreezeRequest');
 export const toggleCardFreezeSuccess = createAction<{ cardId: string; isFrozen: boolean }>('cards/toggleCardFreezeSuccess');
 export const toggleCardFreezeFailure = createAction<string>('cards/toggleCardFreezeFailure');
+
+// Update the selected Card
+export const updateSelectedCard = createAction<number>('cards/updateSelectedCard');
