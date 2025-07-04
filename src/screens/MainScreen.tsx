@@ -8,31 +8,22 @@ import {
   StatusBar,
   Alert,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
-import { RootState } from "../redux/store";
-import {
-  fetchCardsRequest,
-  addCardRequest,
-  toggleCardFreezeRequest,
-} from "../redux/actions";
+import { addCardRequest, toggleCardFreezeRequest } from "../redux/actions";
 import { CardCarousel } from "../components/CardCarousel";
 import { AddCardModal } from "../components/AddCardModal";
+import useMainScreen from "../hooks/useMainScreen";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import CardOptions from "../components/CardOptions";
 
 export const MainScreen: React.FC = () => {
+  const { cards, cardOptions, loading, error, bottomSheetRef, selectedCard } =
+    useMainScreen();
   const dispatch = useDispatch();
-  const {
-    cards,
-    loading,
-    error,
-    selectedCard: selectedCardIndex,
-  } = useSelector((state: RootState) => state.cards);
   const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    dispatch(fetchCardsRequest());
-  }, [dispatch]);
 
   useEffect(() => {
     if (error) {
@@ -43,10 +34,6 @@ export const MainScreen: React.FC = () => {
   const handleAddCard = (cardName: string) => {
     dispatch(addCardRequest({ name: cardName }));
     setModalVisible(false);
-  };
-
-  const handleToggleFreeze = (cardId: string) => {
-    dispatch(toggleCardFreezeRequest({ cardId }));
   };
 
   const handleOpenModal = () => {
@@ -82,15 +69,22 @@ export const MainScreen: React.FC = () => {
       </View>
 
       <View style={{ position: "absolute", left: 0, right: 0, top: 120 }}>
-        {/* Balance Section */}
-        <View style={styles.balanceSection}>
-          <Text style={styles.balanceLabel}>Available balance</Text>
-          <Text style={styles.balanceAmount}>$3,000.00</Text>
-          <View style={styles.rowCenter}>
-            <Ionicons name="eye-outline" size={16} color="#9CA3AF" />
-            <Text style={styles.balanceSubtext}>Show balance</Text>
+        {/* Balance Section will only be shown if cards are available */}
+        {selectedCard ? (
+          <View style={styles.balanceSection}>
+            <Text style={styles.balanceLabel}>Available balance</Text>
+            <Text style={styles.balanceAmount}>${selectedCard?.balance}</Text>
+            <Pressable
+              onPress={() => {
+                console.log("Show Balance");
+              }}
+              style={styles.rowCenter}
+            >
+              <Ionicons name="eye-outline" size={16} color="#9CA3AF" />
+              <Text style={styles.balanceSubtext}>Show balance</Text>
+            </Pressable>
           </View>
-        </View>
+        ) : null}
 
         {/* Cards Section */}
         <View style={styles.cardsSection}>
@@ -109,11 +103,22 @@ export const MainScreen: React.FC = () => {
       </View>
 
       {cards.length > 0 ? (
-        <CardCarousel
-          cards={cards}
-          selectedCardIndex={selectedCardIndex}
-          onToggleFreeze={handleToggleFreeze}
-        />
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={[500]}
+          handleComponent={CardCarousel}
+        >
+          <BottomSheetScrollView
+            bounces={false}
+            bouncesZoom={false}
+            contentContainerStyle={[
+              styles.bottomSheetContainer,
+              styles.bottomSheetContentContainer,
+            ]}
+          >
+            <CardOptions options={cardOptions} />
+          </BottomSheetScrollView>
+        </BottomSheet>
       ) : (
         <View style={styles.emptyState}>
           <Ionicons name="card-outline" size={64} color="#6B7280" />
@@ -200,6 +205,7 @@ const styles = StyleSheet.create({
   },
   cardsSection: {
     flex: 1,
+    paddingTop: 20
   },
   cardsSectionHeader: {
     flexDirection: "row",
@@ -257,29 +263,15 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#FFF",
   },
-  quickActions: {
-    paddingHorizontal: 20,
-    paddingVertical: 24,
-  },
-  actionsGrid: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 16,
-  },
-  actionButton: {
-    alignItems: "center",
-    flex: 1,
-    paddingVertical: 16,
-  },
-  actionText: {
-    fontSize: 12,
-    color: "#9CA3AF",
-    marginTop: 8,
-    textAlign: "center",
-  },
   rowCenter: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
+  },
+  bottomSheetContainer: {
+    paddingTop: 120,
+  },
+  bottomSheetContentContainer: {
+    padding: 16,
   },
 });

@@ -23,6 +23,8 @@ export const createNewCard = (name: string): Omit<Card, 'id'> => {
     expirationDate: generateExpirationDate(),
     isFrozen: false,
     createdAt: new Date().toISOString(),
+    balance: Math.floor(1000 + Math.random() * 9000),
+    cvv: (Math.floor(100 + Math.random() * 900)).toString(),
   };
 };
 

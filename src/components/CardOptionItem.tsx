@@ -1,4 +1,4 @@
-import 'react-native-reanimated'; // added for moti view
+import "react-native-reanimated"; // added for moti view
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { CardOption } from "../typings";
@@ -22,7 +22,7 @@ const CardOptionItem = ({ item }: { item: CardOption }) => {
         <MotiView
           from={{ opacity: 0.4 }}
           animate={{ opacity: 1 }}
-          transition={{ type: "timing", duration: 1000 }}
+          transition={{ type: "timing", duration: 500 }}
         >
           <Feather
             name={item.status ? "toggle-right" : "toggle-left"}
