@@ -1,10 +1,10 @@
 import React, { memo, useRef } from "react";
 import {
-  FlatList,
   Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 
 interface SnapCarouselProps<T> {
   data: T[];

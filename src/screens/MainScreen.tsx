@@ -1,9 +1,9 @@
+import "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   StatusBar,
   Alert,
@@ -18,6 +18,7 @@ import { AddCardModal } from "../components/AddCardModal";
 import useMainScreen from "../hooks/useMainScreen";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import CardOptions from "../components/CardOptions";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export const MainScreen: React.FC = () => {
   const { cards, cardOptions, loading, error, bottomSheetRef, selectedCard } =
@@ -46,29 +47,30 @@ export const MainScreen: React.FC = () => {
 
   if (loading && cards.length === 0) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#10B981" />
-        <Text style={styles.loadingText}>Loading your cards...</Text>
-      </SafeAreaView>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#10B981" />
+          <Text style={styles.loadingText}>Loading your cards...</Text>
+        </SafeAreaView>
+      </SafeAreaProvider>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#111827" />
-
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Good morning</Text>
-          <Text style={styles.username}>John Doe</Text>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#111827" />
+        {/* Header */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.greeting}>Good morning</Text>
+            <Text style={styles.username}>John Doe</Text>
+          </View>
+          <TouchableOpacity style={styles.profileButton}>
+            <Ionicons name="person-circle-outline" size={32} color="#10B981" />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.profileButton}>
-          <Ionicons name="person-circle-outline" size={32} color="#10B981" />
-        </TouchableOpacity>
-      </View>
 
-      <View style={{ position: "absolute", left: 0, right: 0, top: 120 }}>
         {/* Balance Section will only be shown if cards are available */}
         {selectedCard ? (
           <View style={styles.balanceSection}>
@@ -87,62 +89,63 @@ export const MainScreen: React.FC = () => {
         ) : null}
 
         {/* Cards Section */}
-        <View style={styles.cardsSection}>
-          <View style={styles.cardsSectionHeader}>
-            <Text style={styles.sectionTitle}>Debit Cards</Text>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={handleOpenModal}
-              disabled={loading}
-            >
-              <Ionicons name="add" size={20} color="#10B981" />
-              <Text style={styles.addButtonText}>Add Card</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
 
-      {cards.length > 0 ? (
-        <BottomSheet
-          ref={bottomSheetRef}
-          snapPoints={[500]}
-          handleComponent={CardCarousel}
-        >
-          <BottomSheetScrollView
-            bounces={false}
-            bouncesZoom={false}
-            contentContainerStyle={[
-              styles.bottomSheetContainer,
-              styles.bottomSheetContentContainer,
-            ]}
-          >
-            <CardOptions options={cardOptions} />
-          </BottomSheetScrollView>
-        </BottomSheet>
-      ) : (
-        <View style={styles.emptyState}>
-          <Ionicons name="card-outline" size={64} color="#6B7280" />
-          <Text style={styles.emptyStateTitle}>No cards yet</Text>
-          <Text style={styles.emptyStateText}>
-            Add your first card to get started
-          </Text>
+        <View style={styles.cardsSectionHeader}>
+          <Text style={styles.sectionTitle}>Debit Cards</Text>
           <TouchableOpacity
-            style={styles.emptyStateButton}
+            style={styles.addButton}
             onPress={handleOpenModal}
+            disabled={loading}
           >
-            <Text style={styles.emptyStateButtonText}>Add Card</Text>
+            <Ionicons name="add" size={20} color="#10B981" />
+            <Text style={styles.addButtonText}>Add Card</Text>
           </TouchableOpacity>
         </View>
-      )}
 
-      {/* Add Card Modal */}
-      <AddCardModal
-        visible={modalVisible}
-        onClose={handleCloseModal}
-        onAddCard={handleAddCard}
-        loading={loading}
-      />
-    </SafeAreaView>
+        {cards.length > 0 ? (
+          <BottomSheet
+            ref={bottomSheetRef}
+            snapPoints={[500]}
+            handleComponent={CardCarousel}
+          >
+            <BottomSheetScrollView
+              bounces={false}
+              bouncesZoom={false}
+              contentContainerStyle={[
+                styles.bottomSheetContainer,
+                styles.bottomSheetContentContainer,
+              ]}
+            >
+              <CardOptions options={cardOptions} />
+            </BottomSheetScrollView>
+          </BottomSheet>
+        ) : (
+          <View style={styles.emptyState}>
+            <Ionicons name="card-outline" size={64} color="#6B7280" />
+            <Text style={styles.emptyStateTitle}>No cards yet</Text>
+            <Text style={styles.emptyStateText}>
+              Add your first card to get started
+            </Text>
+            <TouchableOpacity
+              style={styles.emptyStateButton}
+              onPress={handleOpenModal}
+            >
+              <Text style={styles.emptyStateButtonText}>Add Card</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <View>
+          {/* Add Card Modal */}
+          <AddCardModal
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            onAddCard={handleAddCard}
+            loading={loading}
+          />
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
@@ -167,7 +170,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingTop: 16,
   },
   greeting: {
     fontSize: 14,
@@ -205,7 +208,7 @@ const styles = StyleSheet.create({
   },
   cardsSection: {
     flex: 1,
-    paddingTop: 20
+    paddingTop: 20,
   },
   cardsSectionHeader: {
     flexDirection: "row",
