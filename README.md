@@ -83,22 +83,27 @@ yarn web
 ```
 src/
 ├── api/
-│   └── mockApi.ts          # Mock API implementation
+│   └── mockApi.ts              # Mock API implementation
 ├── components/
-│   ├── AddCardModal.tsx    # Modal for adding new cards
-│   ├── CardCarousel.tsx    # Horizontal scrollable card carousel
-│   └── CardComponent.tsx   # Individual card component
+│   ├── AddCardModal.tsx        # Modal for adding new cards
+│   ├── CardCarousel.tsx        # Horizontal scrollable card carousel
+│   ├── CardComponent.tsx       # Individual card component
+│   ├── SnapCarousel.tsx        # Carousel utility component
+│   ├── CardOptionItem.tsx      # Card option item component
+│   └── CardOptions.tsx         # Card options list component
+├── hooks/
+│   └── useMainScreen.ts        # Custom hook for main screen logic
 ├── redux/
-│   ├── actions.ts          # Redux actions
-│   ├── reducers.ts         # Redux reducers
-│   ├── sagas.ts            # Redux sagas for async operations
-│   └── store.ts            # Redux store configuration
+│   ├── actions.ts              # Redux actions
+│   ├── reducers.ts             # Redux reducers
+│   ├── sagas.ts                # Redux sagas for async operations
+│   └── store.ts                # Redux store configuration
 ├── screens/
-│   └── MainScreen.tsx      # Main application screen
-├── types/
-│   └── index.ts            # TypeScript type definitions
+│   └── MainScreen.tsx          # Main application screen
+├── typings/
+│   └── index.ts                # TypeScript type definitions
 └── utils/
-    └── cardUtils.ts        # Utility functions for card operations
+    └── cardUtils.ts            # Utility functions for card operations
 ```
 
 ## Mock API Endpoints
