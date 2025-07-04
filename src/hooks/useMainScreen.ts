@@ -42,9 +42,9 @@ export default () => {
     },
   ];
 
-  useEffect(() => {
-    dispatch(fetchCardsRequest());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchCardsRequest());
+  // }, [dispatch]);
 
   return {
     cards,
